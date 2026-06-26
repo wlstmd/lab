@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: fallback
+spec:
+  hosts:
+    - "*.wlstmd.cloud"
+  gateways:
+    - istio-ingress/public-gateway
+  http:
+    - route:
+        - destination:
+            host: root-service.root.svc.cluster.local
+            port:
+              number: 80

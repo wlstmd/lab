@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: linux
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    namespace: linux
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/wlstmd/lab.git
+    targetRevision: HEAD
+    path: linux
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    managedNamespaceMetadata:
+      labels:
+        istio.io/dataplane-mode: ambient
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true

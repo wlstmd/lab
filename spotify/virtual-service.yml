@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: spotify
+spec:
+  hosts:
+    - "spotify.wlstmd.cloud"
+  gateways:
+    - istio-ingress/public-gateway
+  http:
+    - match:
+        - uri:
+            prefix: /
+      route:
+        - destination:
+            host: spotify-service.spotify.svc.cluster.local
+            port:
+              number: 80

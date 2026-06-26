@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tree
+  labels:
+    app.kubernetes.io/name: tree
+    app.kubernetes.io/version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tree
+  template:
+    metadata:
+      labels:
+        app: tree
+        app.kubernetes.io/name: tree
+        app.kubernetes.io/version: v1
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/wlstmd/tree:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
