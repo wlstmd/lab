@@ -8,11 +8,7 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - "wlstmd.cloud"
     - "argo.wlstmd.cloud"
-    - "web.wlstmd.cloud"
-    - "spotify.wlstmd.cloud"
-    - "terminal.wlstmd.cloud"
-    - "linux.wlstmd.cloud"
-    - "tree.wlstmd.cloud"
-    - "wave.wlstmd.cloud"
+    # 나머지 서브도메인(wlstmd.cloud, web, terminal, linux, tree)은 현재 GitHub Pages로
+    # DNS가 가 있어서 제외함. spotify/wave는 DNS 레코드 자체가 없음.
+    # 이 서버로 옮기기로 하면 DNS를 [REDACTED_IP]으로 바꾸고 여기에 host 추가.
