@@ -7,81 +7,151 @@ metadata:
 data:
   lab-overview.json: |
     {
-      "title": "Lab Overview",
       "uid": "lab-overview",
+      "title": "Lab Overview",
+      "description": "Lab Kubernetes overview. Node panels cover the whole cluster; workload panels respect the namespace filter. Managed in Git.",
+      "tags": ["lab", "kubernetes", "overview"],
       "timezone": "browser",
       "schemaVersion": 39,
       "version": 1,
+      "editable": false,
+      "graphTooltip": 1,
       "refresh": "30s",
-      "time": { "from": "now-6h", "to": "now" },
+      "time": {"from": "now-6h", "to": "now"},
+      "timepicker": {},
+      "annotations": {"list": []},
+      "links": [],
+      "templating": {"list": [
+        {"name": "namespace", "label": "Namespace", "type": "query", "query": "label_values(kube_namespace_created, namespace)", "refresh": 1, "sort": 1, "multi": true, "includeAll": true, "allValue": ".*", "current": {"text": "All", "value": "$__all"}}
+      ]},
       "panels": [
         {
-          "id": 1, "type": "stat", "title": "Ready nodes",
-          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
-          "targets": [{ "expr": "count(kube_node_status_condition{condition=\"Ready\",status=\"true\"})", "refId": "A" }]
+          "id": 1, "title": "Ready nodes", "type": "stat", "gridPos": {"x": 0, "y": 0, "w": 4, "h": 4},
+          "targets": [{"refId": "A", "expr": "sum(kube_node_status_condition{condition=\"Ready\",status=\"true\"})", "instant": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "blue"}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value", "graphMode": "none"}
         },
         {
-          "id": 2, "type": "stat", "title": "Running pods",
-          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
-          "targets": [{ "expr": "count(kube_pod_status_phase{phase=\"Running\"})", "refId": "A" }]
+          "id": 2, "title": "Running pods", "type": "stat", "gridPos": {"x": 4, "y": 0, "w": 4, "h": 4},
+          "targets": [{"refId": "A", "expr": "sum(kube_pod_status_phase{namespace=~\"$namespace\",phase=\"Running\"})", "instant": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "fixed", "fixedColor": "blue"}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value", "graphMode": "none"}
         },
         {
-          "id": 3, "type": "stat", "title": "Pod restarts (1h)",
-          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
-          "fieldConfig": { "defaults": { "thresholds": { "steps": [
-            { "color": "green", "value": null }, { "color": "red", "value": 1 }
-          ] } } },
-          "targets": [{ "expr": "sum(increase(kube_pod_container_status_restarts_total[1h])) OR on() vector(0)", "refId": "A" }]
+          "id": 3, "title": "Active pods not ready", "type": "stat", "gridPos": {"x": 8, "y": 0, "w": 4, "h": 4},
+          "description": "Pending, Unknown or Running pods without Ready=true; completed jobs are excluded.",
+          "targets": [{"refId": "A", "expr": "sum((1 - kube_pod_status_ready{namespace=~\"$namespace\",condition=\"true\"}) * on(namespace,pod,uid) group_left() (sum by(namespace,pod,uid) (kube_pod_status_phase{namespace=~\"$namespace\",phase=~\"Pending|Running|Unknown\"})))", "instant": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "none"}
         },
         {
-          "id": 4, "type": "stat", "title": "CPU cores",
-          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
-          "targets": [{ "expr": "count(node_cpu_seconds_total{mode=\"idle\"})", "refId": "A" }]
+          "id": 4, "title": "Container restarts · 24h", "type": "stat", "gridPos": {"x": 12, "y": 0, "w": 4, "h": 4},
+          "targets": [{"refId": "A", "expr": "sum(increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\"}[24h]))", "instant": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 1}, {"color": "red", "value": 10}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "value", "graphMode": "none"}
         },
         {
-          "id": 5, "type": "timeseries", "title": "Node CPU usage",
-          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 4 },
-          "fieldConfig": { "defaults": { "unit": "percent", "max": 100, "min": 0 } },
-          "targets": [{ "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "legendFormat": "{{instance}}", "refId": "A" }]
+          "id": 5, "title": "Scrape targets down", "type": "stat", "gridPos": {"x": 16, "y": 0, "w": 4, "h": 4},
+          "targets": [{"refId": "A", "expr": "sum(1 - up)", "instant": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "none"}
         },
         {
-          "id": 6, "type": "timeseries", "title": "Node memory usage",
-          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 4 },
-          "fieldConfig": { "defaults": { "unit": "percent", "max": 100, "min": 0 } },
-          "targets": [{ "expr": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))", "legendFormat": "{{instance}}", "refId": "A" }]
+          "id": 6, "title": "Missing deployment replicas", "type": "stat", "gridPos": {"x": 20, "y": 0, "w": 4, "h": 4},
+          "description": "Desired minus available replicas; intentionally scaled-to-zero deployments do not count as failures.",
+          "targets": [{"refId": "A", "expr": "sum(clamp_min(kube_deployment_spec_replicas{namespace=~\"$namespace\"} - kube_deployment_status_replicas_available{namespace=~\"$namespace\"}, 0))", "instant": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "decimals": 0, "color": {"mode": "thresholds"}, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "red", "value": 1}]}}, "overrides": []},
+          "options": {"reduceOptions": {"calcs": ["lastNotNull"]}, "colorMode": "background", "graphMode": "none"}
         },
         {
-          "id": 7, "type": "timeseries", "title": "Root filesystem usage",
-          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 12 },
-          "fieldConfig": { "defaults": { "unit": "percent", "max": 100, "min": 0 } },
-          "targets": [{ "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"tmpfs\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"tmpfs\"}) * 100)", "legendFormat": "{{instance}}", "refId": "A" }]
+          "id": 7, "title": "Node CPU usage", "type": "timeseries", "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+          "targets": [{"refId": "A", "expr": "(100 * (1 - avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[$__rate_interval])))) * on(instance) group_left(nodename) node_uname_info", "legendFormat": "{{nodename}}", "range": true}],
+          "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
         },
         {
-          "id": 8, "type": "timeseries", "title": "Network traffic",
-          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 12 },
-          "fieldConfig": { "defaults": { "unit": "Bps" } },
+          "id": 8, "title": "Node memory usage", "type": "timeseries", "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+          "description": "Used memory excludes reclaimable cache (MemAvailable).",
+          "targets": [{"refId": "A", "expr": "(100 * (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * on(instance) group_left(nodename) node_uname_info", "legendFormat": "{{nodename}}", "range": true}],
+          "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 9, "title": "Root filesystem usage", "type": "timeseries", "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8},
+          "targets": [{"refId": "A", "expr": "(100 * (1 - node_filesystem_avail_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay|squashfs\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!~\"tmpfs|overlay|squashfs\"})) * on(instance) group_left(nodename) node_uname_info", "legendFormat": "{{nodename}} · {{device}}", "range": true}],
+          "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull", "max"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 10, "title": "Physical network traffic", "type": "timeseries", "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8},
+          "description": "Physical Ethernet interfaces only, avoiding double-counting container, tunnel and bridge traffic. Receive and transmit are both positive.",
           "targets": [
-            { "expr": "rate(node_network_receive_bytes_total{device!~\"lo|veth.*|docker.*|cni.*|flannel.*\"}[5m])", "legendFormat": "{{device}} RX", "refId": "A" },
-            { "expr": "rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|docker.*|cni.*|flannel.*\"}[5m])", "legendFormat": "{{device}} TX", "refId": "B" }
-          ]
+            {"refId": "A", "expr": "sum by(instance) (rate(node_network_receive_bytes_total{device=~\"en.*|eth.*\"}[$__rate_interval])) * on(instance) group_left(nodename) node_uname_info", "legendFormat": "{{nodename}} RX", "range": true},
+            {"refId": "B", "expr": "sum by(instance) (rate(node_network_transmit_bytes_total{device=~\"en.*|eth.*\"}[$__rate_interval])) * on(instance) group_left(nodename) node_uname_info", "legendFormat": "{{nodename}} TX", "range": true}
+          ],
+          "fieldConfig": {"defaults": {"unit": "Bps", "min": 0}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi"}}
         },
         {
-          "id": 9, "type": "timeseries", "title": "CPU by namespace",
-          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 20 },
-          "fieldConfig": { "defaults": { "unit": "short" } },
-          "targets": [{ "expr": "sum by (namespace) (rate(container_cpu_usage_seconds_total{namespace!=\"\",container!=\"\"}[5m]))", "legendFormat": "{{namespace}}", "refId": "A" }]
+          "id": 17, "title": "Disk capacity by filesystem", "type": "table", "gridPos": {"x": 0, "y": 20, "w": 24, "h": 8},
+          "description": "All disk-backed filesystems reported by node-exporter. Used includes space reserved from ordinary users: total minus available. Memory and overlay virtual filesystems are excluded. Cluster-wide; namespace filter does not apply.",
+          "targets": [
+            {"refId": "A", "expr": "sum by(nodename,mountpoint,device,fstype) ((node_filesystem_size_bytes{fstype!~\"tmpfs|devtmpfs|overlay|squashfs|nsfs|fuse\"} - node_filesystem_avail_bytes{fstype!~\"tmpfs|devtmpfs|overlay|squashfs|nsfs|fuse\"}) * on(instance) group_left(nodename) node_uname_info)", "instant": true, "format": "table"},
+            {"refId": "B", "expr": "sum by(nodename,mountpoint,device,fstype) (node_filesystem_avail_bytes{fstype!~\"tmpfs|devtmpfs|overlay|squashfs|nsfs|fuse\"} * on(instance) group_left(nodename) node_uname_info)", "instant": true, "format": "table"},
+            {"refId": "C", "expr": "sum by(nodename,mountpoint,device,fstype) (node_filesystem_size_bytes{fstype!~\"tmpfs|devtmpfs|overlay|squashfs|nsfs|fuse\"} * on(instance) group_left(nodename) node_uname_info)", "instant": true, "format": "table"},
+            {"refId": "D", "expr": "sum by(nodename,mountpoint,device,fstype) ((100 * (1 - node_filesystem_avail_bytes{fstype!~\"tmpfs|devtmpfs|overlay|squashfs|nsfs|fuse\"} / (node_filesystem_size_bytes{fstype!~\"tmpfs|devtmpfs|overlay|squashfs|nsfs|fuse\"} > 0))) * on(instance) group_left(nodename) node_uname_info)", "instant": true, "format": "table"}
+          ],
+          "transformations": [
+            {"id": "merge", "options": {}},
+            {"id": "organize", "options": {"excludeByName": {"Time": true}, "indexByName": {"nodename": 0, "mountpoint": 1, "device": 2, "fstype": 3, "Value #A": 4, "Value #B": 5, "Value #C": 6, "Value #D": 7}, "renameByName": {"nodename": "Node", "mountpoint": "Mount", "device": "Device", "fstype": "Filesystem", "Value #A": "Used", "Value #B": "Available", "Value #C": "Total", "Value #D": "Usage"}}}
+          ],
+          "fieldConfig": {"defaults": {"unit": "bytes", "decimals": 1}, "overrides": [
+            {"matcher": {"id": "byName", "options": "Usage"}, "properties": [
+              {"id": "unit", "value": "percent"}, {"id": "min", "value": 0}, {"id": "max", "value": 100},
+              {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 80}, {"color": "red", "value": 90}]}},
+              {"id": "custom.cellOptions", "value": {"type": "gauge"}}
+            ]}
+          ]},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Usage", "desc": true}]}
         },
         {
-          "id": 10, "type": "timeseries", "title": "Memory by namespace",
-          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 20 },
-          "fieldConfig": { "defaults": { "unit": "bytes" } },
-          "targets": [{ "expr": "sum by (namespace) (container_memory_working_set_bytes{namespace!=\"\",container!=\"\"})", "legendFormat": "{{namespace}}", "refId": "A" }]
+          "id": 11, "title": "CPU by namespace", "type": "timeseries", "gridPos": {"x": 0, "y": 28, "w": 12, "h": 8},
+          "targets": [{"refId": "A", "expr": "sum by(namespace) (rate(container_cpu_usage_seconds_total{job=\"kubernetes-nodes-cadvisor\",namespace=~\"$namespace\",namespace!=\"\",container!=\"\",container!=\"POD\"}[$__rate_interval]))", "legendFormat": "{{namespace}}", "range": true}],
+          "fieldConfig": {"defaults": {"unit": "cores", "min": 0}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "right", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi"}}
         },
         {
-          "id": 11, "type": "table", "title": "Disk capacity by filesystem",
-          "gridPos": { "h": 8, "w": 16, "x": 0, "y": 28 },
-          "fieldConfig": { "defaults": { "unit": "percent" } },
-          "targets": [{ "expr": "100 - ((node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"}) * 100)", "format": "table", "instant": true, "refId": "A" }]
+          "id": 12, "title": "Memory by namespace", "type": "timeseries", "gridPos": {"x": 12, "y": 28, "w": 12, "h": 8},
+          "targets": [{"refId": "A", "expr": "sum by(namespace) (container_memory_working_set_bytes{job=\"kubernetes-nodes-cadvisor\",namespace=~\"$namespace\",namespace!=\"\",container!=\"\",container!=\"POD\"})", "legendFormat": "{{namespace}}", "range": true}],
+          "fieldConfig": {"defaults": {"unit": "bytes", "min": 0}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "right", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 13, "title": "Pods by phase", "type": "timeseries", "gridPos": {"x": 0, "y": 36, "w": 12, "h": 8},
+          "targets": [{"refId": "A", "expr": "sum by(phase) (kube_pod_status_phase{namespace=~\"$namespace\"})", "legendFormat": "{{phase}}", "range": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "min": 0, "decimals": 0}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "bottom", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 14, "title": "Container restarts by namespace · 1h", "type": "timeseries", "gridPos": {"x": 12, "y": 36, "w": 12, "h": 8},
+          "targets": [{"refId": "A", "expr": "sum by(namespace) (increase(kube_pod_container_status_restarts_total{namespace=~\"$namespace\"}[1h]))", "legendFormat": "{{namespace}}", "range": true}],
+          "fieldConfig": {"defaults": {"unit": "short", "min": 0, "decimals": 0}, "overrides": []},
+          "options": {"legend": {"displayMode": "table", "placement": "right", "calcs": ["lastNotNull"]}, "tooltip": {"mode": "multi"}}
+        },
+        {
+          "id": 15, "title": "Scrape health by job", "type": "table", "gridPos": {"x": 0, "y": 44, "w": 12, "h": 8},
+          "targets": [{"refId": "A", "expr": "avg by(job) (up)", "instant": true, "format": "table"}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"job": "Job", "Value": "Up"}}}],
+          "fieldConfig": {"defaults": {"custom": {"align": "auto"}}, "overrides": [{"matcher": {"id": "byName", "options": "Up"}, "properties": [{"id": "unit", "value": "percentunit"}, {"id": "min", "value": 0}, {"id": "max", "value": 1}, {"id": "thresholds", "value": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, {"id": "custom.cellOptions", "value": {"type": "color-background"}}]}]},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Up", "desc": false}]}
+        },
+        {
+          "id": 16, "title": "Deployments below desired replicas", "type": "table", "gridPos": {"x": 12, "y": 44, "w": 12, "h": 8},
+          "description": "Only deployments with missing replicas. No data means no matching deployments if kube-state-metrics is healthy.",
+          "targets": [{"refId": "A", "expr": "sum by(namespace,deployment) (kube_deployment_spec_replicas{namespace=~\"$namespace\"} - kube_deployment_status_replicas_available{namespace=~\"$namespace\"}) > 0", "instant": true, "format": "table"}],
+          "transformations": [{"id": "organize", "options": {"excludeByName": {"Time": true}, "renameByName": {"namespace": "Namespace", "deployment": "Deployment", "Value": "Missing"}}}],
+          "fieldConfig": {"defaults": {"decimals": 0}, "overrides": []},
+          "options": {"showHeader": true, "sortBy": [{"displayName": "Missing", "desc": true}]}
         }
       ]
     }
