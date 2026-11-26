@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kmu-room-finder
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    namespace: kmu-room-finder
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/wlstmd/lab.git
+    targetRevision: HEAD
+    path: kmu-room-finder
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    managedNamespaceMetadata:
+      labels:
+        istio.io/dataplane-mode: ambient
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+      - PruneLast=true

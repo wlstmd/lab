@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kmu-room-finder
+  labels:
+    app.kubernetes.io/name: kmu-room-finder
+    app.kubernetes.io/version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kmu-room-finder
+  template:
+    metadata:
+      labels:
+        app: kmu-room-finder
+        app.kubernetes.io/name: kmu-room-finder
+        app.kubernetes.io/version: v1
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/wlstmd/keimyung-room-finder:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi

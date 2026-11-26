@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: daily-ai
+  labels:
+    app.kubernetes.io/name: daily-ai
+    app.kubernetes.io/version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: daily-ai
+  template:
+    metadata:
+      labels:
+        app: daily-ai
+        app.kubernetes.io/name: daily-ai
+        app.kubernetes.io/version: v1
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/wlstmd/daily-ai:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
