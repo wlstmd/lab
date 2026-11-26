@@ -1,0 +1,33 @@
+# Traefik(k3s 기본, 80/443 소유)이 받은 트래픽을 Istio ingress gateway로 넘겨주는 다리.
+# - HTTP(80): cert-manager HTTP01 챌린지 경로는 Traefik가 직접 처리, 나머지는 Istio로 라우팅
+# - HTTPS(443): TLS passthrough — Istio gateway가 인증서 직접 종료
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: istio-bridge-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`wlstmd.cloud`) || HostRegexp(`^.+\.wlstmd\.cloud$`)
+      kind: Rule
+      services:
+        - name: istio-ingressgateway
+          namespace: istio-ingress
+          port: 80
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteTCP
+metadata:
+  name: istio-bridge-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostSNI(`wlstmd.cloud`) || HostSNI(`*.wlstmd.cloud`)
+      services:
+        - name: istio-ingressgateway
+          namespace: istio-ingress
+          port: 443
+  tls:
+    passthrough: true

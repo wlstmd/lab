@@ -6,3 +6,5 @@ resources:
   - ./gateway.yml
   - ./certificate.yml
   - ./fallback.yml
+  - ./cluster-issuer.yml
+  - ./traefik-bridge.yml
