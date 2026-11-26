@@ -3,3 +3,4 @@ kind: Kustomization
 namespace: monitoring
 resources:
   - ./virtual-service.yml
+  - ./grafana-dashboard-lab-overview.yml

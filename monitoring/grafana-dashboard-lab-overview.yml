@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-lab-overview
+  labels:
+    grafana_dashboard: "1"
+data:
+  lab-overview.json: |
+    {
+      "title": "Lab Overview",
+      "uid": "lab-overview",
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "time": { "from": "now-6h", "to": "now" },
+      "panels": [
+        {
+          "id": 1, "type": "stat", "title": "Ready nodes",
+          "gridPos": { "h": 4, "w": 4, "x": 0, "y": 0 },
+          "targets": [{ "expr": "count(kube_node_status_condition{condition=\"Ready\",status=\"true\"})", "refId": "A" }]
+        },
+        {
+          "id": 2, "type": "stat", "title": "Running pods",
+          "gridPos": { "h": 4, "w": 4, "x": 4, "y": 0 },
+          "targets": [{ "expr": "count(kube_pod_status_phase{phase=\"Running\"})", "refId": "A" }]
+        },
+        {
+          "id": 3, "type": "stat", "title": "Pod restarts (1h)",
+          "gridPos": { "h": 4, "w": 4, "x": 8, "y": 0 },
+          "fieldConfig": { "defaults": { "thresholds": { "steps": [
+            { "color": "green", "value": null }, { "color": "red", "value": 1 }
+          ] } } },
+          "targets": [{ "expr": "sum(increase(kube_pod_container_status_restarts_total[1h])) OR on() vector(0)", "refId": "A" }]
+        },
+        {
+          "id": 4, "type": "stat", "title": "CPU cores",
+          "gridPos": { "h": 4, "w": 4, "x": 12, "y": 0 },
+          "targets": [{ "expr": "count(node_cpu_seconds_total{mode=\"idle\"})", "refId": "A" }]
+        },
+        {
+          "id": 5, "type": "timeseries", "title": "Node CPU usage",
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 4 },
+          "fieldConfig": { "defaults": { "unit": "percent", "max": 100, "min": 0 } },
+          "targets": [{ "expr": "100 - (avg by (instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)", "legendFormat": "{{instance}}", "refId": "A" }]
+        },
+        {
+          "id": 6, "type": "timeseries", "title": "Node memory usage",
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 4 },
+          "fieldConfig": { "defaults": { "unit": "percent", "max": 100, "min": 0 } },
+          "targets": [{ "expr": "100 * (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes))", "legendFormat": "{{instance}}", "refId": "A" }]
+        },
+        {
+          "id": 7, "type": "timeseries", "title": "Root filesystem usage",
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 12 },
+          "fieldConfig": { "defaults": { "unit": "percent", "max": 100, "min": 0 } },
+          "targets": [{ "expr": "100 - ((node_filesystem_avail_bytes{mountpoint=\"/\",fstype!=\"tmpfs\"} / node_filesystem_size_bytes{mountpoint=\"/\",fstype!=\"tmpfs\"}) * 100)", "legendFormat": "{{instance}}", "refId": "A" }]
+        },
+        {
+          "id": 8, "type": "timeseries", "title": "Network traffic",
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 12 },
+          "fieldConfig": { "defaults": { "unit": "Bps" } },
+          "targets": [
+            { "expr": "rate(node_network_receive_bytes_total{device!~\"lo|veth.*|docker.*|cni.*|flannel.*\"}[5m])", "legendFormat": "{{device}} RX", "refId": "A" },
+            { "expr": "rate(node_network_transmit_bytes_total{device!~\"lo|veth.*|docker.*|cni.*|flannel.*\"}[5m])", "legendFormat": "{{device}} TX", "refId": "B" }
+          ]
+        },
+        {
+          "id": 9, "type": "timeseries", "title": "CPU by namespace",
+          "gridPos": { "h": 8, "w": 8, "x": 0, "y": 20 },
+          "fieldConfig": { "defaults": { "unit": "short" } },
+          "targets": [{ "expr": "sum by (namespace) (rate(container_cpu_usage_seconds_total{namespace!=\"\",container!=\"\"}[5m]))", "legendFormat": "{{namespace}}", "refId": "A" }]
+        },
+        {
+          "id": 10, "type": "timeseries", "title": "Memory by namespace",
+          "gridPos": { "h": 8, "w": 8, "x": 8, "y": 20 },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "targets": [{ "expr": "sum by (namespace) (container_memory_working_set_bytes{namespace!=\"\",container!=\"\"})", "legendFormat": "{{namespace}}", "refId": "A" }]
+        },
+        {
+          "id": 11, "type": "table", "title": "Disk capacity by filesystem",
+          "gridPos": { "h": 8, "w": 16, "x": 0, "y": 28 },
+          "fieldConfig": { "defaults": { "unit": "percent" } },
+          "targets": [{ "expr": "100 - ((node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\",mountpoint!=\"\"}) * 100)", "format": "table", "instant": true, "refId": "A" }]
+        }
+      ]
+    }
