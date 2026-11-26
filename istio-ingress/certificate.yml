@@ -9,4 +9,10 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - "wlstmd.cloud"
-    - "*.wlstmd.cloud"
+    - "argo.wlstmd.cloud"
+    - "web.wlstmd.cloud"
+    - "spotify.wlstmd.cloud"
+    - "terminal.wlstmd.cloud"
+    - "linux.wlstmd.cloud"
+    - "tree.wlstmd.cloud"
+    - "wave.wlstmd.cloud"
