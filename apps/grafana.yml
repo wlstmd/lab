@@ -31,9 +31,6 @@ spec:
             org_role: Viewer
           dashboards:
             default_home_dashboard_path: /var/lib/grafana/dashboards/default/lab-overview.json
-        sidecar:
-          datasources:
-            enabled: true
         datasources:
           datasources.yaml:
             apiVersion: 1
