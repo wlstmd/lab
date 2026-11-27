@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: spotify
     app.kubernetes.io/version: v1
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: spotify
@@ -17,6 +17,15 @@ spec:
         app.kubernetes.io/name: spotify
         app.kubernetes.io/version: v1
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: spotify
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: web
           image: ghcr.io/wlstmd/spotify:latest

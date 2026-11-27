@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: kmu-room-finder
     app.kubernetes.io/version: v1
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: kmu-room-finder
@@ -17,6 +17,15 @@ spec:
         app.kubernetes.io/name: kmu-room-finder
         app.kubernetes.io/version: v1
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: kmu-room-finder
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: web
           image: ghcr.io/wlstmd/keimyung-room-finder:latest

@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: daily-ai
     app.kubernetes.io/version: v1
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: daily-ai
@@ -17,6 +17,15 @@ spec:
         app.kubernetes.io/name: daily-ai
         app.kubernetes.io/version: v1
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: daily-ai
+                topologyKey: kubernetes.io/hostname
       containers:
         - name: web
           image: ghcr.io/wlstmd/daily-ai:latest
