@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: velero
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    namespace: velero
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://vmware-tanzu.github.io/helm-charts
+    chart: velero
+    targetRevision: "12.2.5"
+    helm:
+      releaseName: velero
+      values: |
+        initContainers:
+          - name: velero-plugin-for-aws
+            image: velero/velero-plugin-for-aws:v1.12.1
+            volumeMounts:
+              - mountPath: /target
+                name: plugins
+        credentials:
+          existingSecret: cloud-credentials
+        configuration:
+          backupStorageLocation:
+            - name: default
+              provider: aws
+              bucket: velero-backups
+              config:
+                region: ap-tokyo-1
+                s3ForcePathStyle: "true"
+                s3Url: https://nrzrlubpca4y.compat.objectstorage.ap-tokyo-1.oraclecloud.com
+          uploaderType: kopia
+        deployNodeAgent: true
+        nodeAgent:
+          podVolumePath: /var/lib/kubelet/pods
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        schedules:
+          daily-cluster-backup:
+            schedule: "0 18 * * *"
+            template:
+              ttl: "240h0m0s"
+              includeClusterResources: true
+              storageLocation: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
