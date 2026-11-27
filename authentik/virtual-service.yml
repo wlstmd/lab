@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: authentik
+spec:
+  hosts:
+    - "auth.wlstmd.cloud"
+  gateways:
+    - istio-ingress/public-gateway
+  http:
+    - route:
+        - destination:
+            host: authentik-server.authentik.svc.cluster.local
+            port:
+              number: 80

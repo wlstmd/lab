@@ -18,3 +18,5 @@ spec:
     - "terminal.wlstmd.cloud"
     - "tree.wlstmd.cloud"
     - "visualized.wlstmd.cloud"
+    - "auth.wlstmd.cloud"
+    - "vault.wlstmd.cloud"

@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: authentik-ingress
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    namespace: authentik
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/wlstmd/lab.git
+    targetRevision: HEAD
+    path: authentik
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
