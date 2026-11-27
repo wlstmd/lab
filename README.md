@@ -1,19 +1,78 @@
-# Oracle K8s Argo CD HomeLab
+![](./docs/banner.svg)
 
-Oracle Cloud Infrastructure Always Free 위에서 돌아가는 개인 Kubernetes 홈랩의 GitOps 매니페스트 저장소.
+# wlstmd/lab
 
-ArgoCD가 이 저장소를 계속 지켜보면서, 변경 사항이 생기면 자동으로 클러스터에 반영한다 (App of Apps 패턴).
+**lab** is the single source of truth repository containing Kubernetes resource manifest files for my Homelab GitOps environment powered by ArgoCD.
 
-## 구성 요소
+Covered domains include, but are not limited to, apex and subdomains of https://wlstmd.cloud.
 
-- **k3s** — 단일 노드 Kubernetes
-- **ArgoCD** — GitOps 배포
-- **Istio (ambient mode)** — 서비스 메시 / 인그레스
-- **cert-manager** — Let's Encrypt 인증서 자동 발급
-- **Prometheus + Grafana** — 모니터링
+An ArgoCD instance continuously monitors the `apps` folder, which contains manifest files that reference each application's manifest directory. When updates occur, these manifests trigger full resource synchronization. More information on this pattern is here: [App of Apps](https://argo-cd.readthedocs.io/en/stable/operator-manual/cluster-bootstrapping/#app-of-apps-pattern-alternative).
 
-## 구조
+## Contents
 
-- `apps/` — ArgoCD Application 정의 (App of Apps)
-- `argocd/`, `istio-ingress/`, `monitoring/` — 인프라 레이어
-- 그 외 디렉터리 — 각 서비스별 매니페스트
+This repository defines many components of the Kubernetes cluster, such as:
+
+* HTTP Routing (Traefik, Istio Ambient Gateway)
+* TLS Certificate Management/Ordering (cert-manager)
+* Observability (Grafana, Prometheus)
+* GitOps Delivery (ArgoCD)
+* and Actual Service Components.
+
+## Sync Status
+
+<!-- SYNC_TABLE_START -->
+
+<table>
+  
+  <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=apps&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=argocd&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=daily-ai&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=grafana&revision=false&showAppName=true" width="200px" /><br /></td>
+  </tr>
+  
+  <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=istio-ingress&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=keycap&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=kmu-room-finder&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=monitoring&revision=false&showAppName=true" width="200px" /><br /></td>
+  </tr>
+  
+  <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=prometheus&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=root&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=spotify&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=terminal&revision=false&showAppName=true" width="200px" /><br /></td>
+  </tr>
+  
+  <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=tree&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=visualized&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+</table>
+
+<!-- SYNC_TABLE_END -->
+
+## Rights
+
+&copy; 2026. wlstmd. MIT Licensed.

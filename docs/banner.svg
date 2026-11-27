@@ -1,0 +1,11 @@
+<svg width="1200" height="320" viewBox="0 0 1200 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="320" fill="#0a0e14"/>
+
+  <text x="90" y="150" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="80" font-weight="700">
+    <tspan fill="#8a94a3">wlstmd</tspan><tspan fill="#3b82f6">/lab</tspan>
+  </text>
+
+  <rect x="90" y="190" width="3" height="56" fill="#3b82f6"/>
+  <text x="112" y="215" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="22" fill="#9aa4b2">lab is the single source of truth for</text>
+  <text x="112" y="245" font-family="-apple-system, 'Helvetica Neue', Arial, sans-serif" font-size="22" fill="#9aa4b2">Kubernetes manifests powering my homelab.</text>
+</svg>
