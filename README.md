@@ -49,14 +49,18 @@ This repository defines many components of the Kubernetes cluster, such as:
   
   
   
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=dormitory&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=grafana&revision=false&showAppName=true" width="200px" /><br /></td>
-  
-  
-  
-  <td><img src="https://argo.wlstmd.cloud/api/badge?name=istio-ingress&revision=false&showAppName=true" width="200px" /><br /></td>
   </tr>
   
   <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=istio-ingress&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=keycap&revision=false&showAppName=true" width="200px" /><br /></td>
   
   
@@ -66,13 +70,13 @@ This repository defines many components of the Kubernetes cluster, such as:
   
   
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=monitoring&revision=false&showAppName=true" width="200px" /><br /></td>
-  
-  
-  
-  <td><img src="https://argo.wlstmd.cloud/api/badge?name=prometheus&revision=false&showAppName=true" width="200px" /><br /></td>
   </tr>
   
   <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=prometheus&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=root&revision=false&showAppName=true" width="200px" /><br /></td>
   
   
@@ -82,13 +86,13 @@ This repository defines many components of the Kubernetes cluster, such as:
   
   
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=terminal&revision=false&showAppName=true" width="200px" /><br /></td>
-  
-  
-  
-  <td><img src="https://argo.wlstmd.cloud/api/badge?name=tree&revision=false&showAppName=true" width="200px" /><br /></td>
   </tr>
   
   <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=tree&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=vault&revision=false&showAppName=true" width="200px" /><br /></td>
   
   
@@ -98,11 +102,11 @@ This repository defines many components of the Kubernetes cluster, such as:
   
   
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=velero&revision=false&showAppName=true" width="200px" /><br /></td>
-  
-  
-  
-  <td><img src="https://argo.wlstmd.cloud/api/badge?name=visualized&revision=false&showAppName=true" width="200px" /><br /></td>
   </tr>
+  
+  <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=visualized&revision=false&showAppName=true" width="200px" /><br /></td>
+  
   
 </table>
 
