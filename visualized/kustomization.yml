@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: visualized
+resources:
+  - ./rbac.yml
+  - ./deployment.yml
+  - ./service.yml
+  - ./virtual-service.yml
+images:
+  - name: ghcr.io/pmh-only/kube-universe
+    newTag: latest
+    digest: sha256:3fbb19cc8eacad94ee88c8d357b64cafa0a16e6e5d7c1b368b22becd252b069f
