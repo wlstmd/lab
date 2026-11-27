@@ -21,6 +21,9 @@ spec:
         - name: web
           image: ghcr.io/wlstmd/daily-ai:latest
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: daily-ai-env
           ports:
             - containerPort: 3000
           resources:

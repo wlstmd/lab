@@ -21,6 +21,9 @@ spec:
         - name: web
           image: ghcr.io/wlstmd/keycap:latest
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: keycap-env
           ports:
             - containerPort: 80
           resources:

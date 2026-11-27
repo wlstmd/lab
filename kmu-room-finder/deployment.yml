@@ -21,6 +21,9 @@ spec:
         - name: web
           image: ghcr.io/wlstmd/keimyung-room-finder:latest
           imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: kmu-room-finder-env
           ports:
             - containerPort: 80
           resources:
