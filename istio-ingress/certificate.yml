@@ -20,3 +20,4 @@ spec:
     - "visualized.wlstmd.cloud"
     - "auth.wlstmd.cloud"
     - "vault.wlstmd.cloud"
+    - "dormitory.wlstmd.cloud"
