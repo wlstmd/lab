@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    namespace: vault
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://helm.releases.hashicorp.com
+    chart: vault
+    targetRevision: "0.34.1"
+    helm:
+      releaseName: vault
+      values: |
+        server:
+          standalone:
+            enabled: true
+            config: |
+              listener "tcp" {
+                tls_disable = 1
+                address     = "[::]:8200"
+                cluster_address = "[::]:8201"
+              }
+              storage "raft" {
+                path = "/vault/data"
+              }
+          dataStorage:
+            enabled: true
+            size: 2Gi
+          resources:
+            requests:
+              cpu: 50m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          ha:
+            enabled: false
+        injector:
+          enabled: false
+        ui:
+          enabled: true
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    managedNamespaceMetadata:
+      labels:
+        istio.io/dataplane-mode: ambient
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
