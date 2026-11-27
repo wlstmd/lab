@@ -5,3 +5,7 @@ resources:
   - ./deployment.yml
   - ./service.yml
   - ./virtual-service.yml
+images:
+  - name: ghcr.io/wlstmd/home
+    newTag: latest
+    digest: sha256:ed1dcb41989690eb634baf0de61130165ba959bb52bb0ae78efab160459ec01a
