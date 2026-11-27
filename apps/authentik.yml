@@ -3,6 +3,9 @@ kind: Application
 metadata:
   name: authentik
   namespace: argocd
+  # Namespace intentionally has no istio.io/dataplane-mode=ambient label:
+  # ztunnel resets the bundled Postgres's raw TCP connections intermittently,
+  # causing authentik-server to crashloop. Do not re-add it.
 spec:
   project: default
   destination:
@@ -45,9 +48,6 @@ spec:
     automated:
       prune: true
       selfHeal: true
-    managedNamespaceMetadata:
-      labels:
-        istio.io/dataplane-mode: ambient
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
