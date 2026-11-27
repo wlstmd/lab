@@ -4,7 +4,7 @@ metadata:
   name: visualized
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/pmh-only/kube-universe
+    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/pmh-only/kube-universe:latest
     argocd-image-updater.argoproj.io/web.update-strategy: digest
     argocd-image-updater.argoproj.io/write-back-method: argocd
 spec:

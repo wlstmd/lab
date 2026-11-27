@@ -4,7 +4,7 @@ metadata:
   name: keycap
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/wlstmd/keycap
+    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/wlstmd/keycap:latest
     argocd-image-updater.argoproj.io/web.update-strategy: digest
     argocd-image-updater.argoproj.io/write-back-method: argocd
 spec:
