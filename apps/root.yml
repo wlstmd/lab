@@ -3,6 +3,10 @@ kind: Application
 metadata:
   name: root
   namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/wlstmd/home
+    argocd-image-updater.argoproj.io/web.update-strategy: digest
+    argocd-image-updater.argoproj.io/write-back-method: argocd
 spec:
   project: default
   destination:
