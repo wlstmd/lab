@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dormitory
+  namespace: argocd
+  # Namespace intentionally has no istio.io/dataplane-mode=ambient label:
+  # ztunnel resets raw TCP connections (see authentik.yml), and web<->MySQL here is raw TCP too.
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: web=ghcr.io/wlstmd/dormitory:latest
+    argocd-image-updater.argoproj.io/web.update-strategy: digest
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+spec:
+  project: default
+  destination:
+    namespace: dormitory
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://github.com/wlstmd/lab.git
+    targetRevision: HEAD
+    path: dormitory
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
