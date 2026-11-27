@@ -17,6 +17,8 @@ spec:
         app.kubernetes.io/name: kmu-room-finder
         app.kubernetes.io/version: v1
     spec:
+      serviceAccountName: kmu-room-finder-counter
+      automountServiceAccountToken: true
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
@@ -30,11 +32,37 @@ spec:
         - name: web
           image: ghcr.io/wlstmd/keimyung-room-finder:latest
           imagePullPolicy: Always
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
           envFrom:
             - secretRef:
                 name: kmu-room-finder-env
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
           ports:
-            - containerPort: 80
+            - containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            failureThreshold: 12
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
           resources:
             requests:
               cpu: 10m

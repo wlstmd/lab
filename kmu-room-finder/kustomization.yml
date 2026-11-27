@@ -4,4 +4,5 @@ namespace: kmu-room-finder
 resources:
   - ./deployment.yml
   - ./service.yml
+  - ./visitor-counter.yml
   - ./virtual-service.yml

@@ -16,6 +16,15 @@ spec:
     repoURL: https://github.com/wlstmd/lab.git
     targetRevision: HEAD
     path: kmu-room-finder
+  ignoreDifferences:
+    - group: ""
+      kind: ConfigMap
+      name: kmu-room-finder-visitor-counts
+      namespace: kmu-room-finder
+      jsonPointers:
+        - /data/date
+        - /data/today
+        - /data/total
   syncPolicy:
     automated:
       prune: true
@@ -28,3 +37,4 @@ spec:
       - ServerSideApply=true
       - ApplyOutOfSyncOnly=true
       - PruneLast=true
+      - RespectIgnoreDifferences=true
