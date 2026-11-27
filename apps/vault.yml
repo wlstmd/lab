@@ -19,6 +19,7 @@ spec:
           standalone:
             enabled: true
             config: |
+              ui = true
               listener "tcp" {
                 tls_disable = 1
                 address     = "[::]:8200"
