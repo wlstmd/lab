@@ -6,3 +6,4 @@ resources:
   - ./project.yml
   - ./repository.yml
   - ./virtual-service.yml
+  - ./image-updater.yml
