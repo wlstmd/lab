@@ -101,10 +101,18 @@ This repository defines many components of the Kubernetes cluster, such as:
   
   
   
-  <td><img src="https://argo.wlstmd.cloud/api/badge?name=velero&revision=false&showAppName=true" width="200px" /><br /></td>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=vault-secrets-operator&revision=false&showAppName=true" width="200px" /><br /></td>
   </tr>
   
   <tr>
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=velero&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  
+  <td><img src="https://argo.wlstmd.cloud/api/badge?name=velero-secrets&revision=false&showAppName=true" width="200px" /><br /></td>
+  
+  
+  
   <td><img src="https://argo.wlstmd.cloud/api/badge?name=visualized&revision=false&showAppName=true" width="200px" /><br /></td>
   
   
