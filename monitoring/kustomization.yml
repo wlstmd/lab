@@ -4,3 +4,5 @@ namespace: monitoring
 resources:
   - ./virtual-service.yml
   - ./grafana-dashboard-lab-overview.yml
+  - ./vault-auth.yml
+  - ./vault-secret.yml

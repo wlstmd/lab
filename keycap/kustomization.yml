@@ -5,3 +5,5 @@ resources:
   - ./deployment.yml
   - ./service.yml
   - ./virtual-service.yml
+  - ./vault-auth.yml
+  - ./vault-secret.yml
